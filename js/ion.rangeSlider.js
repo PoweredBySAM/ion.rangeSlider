@@ -129,6 +129,22 @@
         '<span class="irs-slider from"></span>' +
         '<span class="irs-slider to"></span>';
 
+    var triple_html =
+        '<span class="triple">' +
+        '<span class="irs">' +
+        '<span class="irs-line" tabindex="-1"><span class="irs-line-left"></span><span class="irs-line-right"></span></span>' +
+        '<span class="irs-min">0</span><span class="irs-max">1</span>' +
+        '<span class="irs-from">0</span><span class="irs-to">0</span><span class="irs-single">0</span>' +
+        '</span>' +
+        '<span class="irs-input">0</span>' +
+        '<span class="irs-grid"></span>' +
+        '<span class="irs-bar"></span>' +
+        '<span class="irs-shadow shadow-from"></span>' +
+        '<span class="irs-shadow shadow-to"></span>' +
+        '<span class="irs-slider from"></span>' +
+        '<span class="irs-slider to"></span>' +
+        '</span>';
+
     var disable_html =
         '<span class="irs-disable-mask"></span>';
 
@@ -181,6 +197,8 @@
             single: null,
             bar: null,
             line: null,
+            lineLeft: null,
+            lineRight: null,
             s_single: null,
             s_from: null,
             s_to: null,
@@ -473,7 +491,7 @@
                 this.callOnStart();
             }
 
-            this.updateScene();
+            this.updateScene(true);
         },
 
         /**
@@ -487,6 +505,35 @@
             this.result.slider = this.$cache.cont;
 
             this.$cache.cont.html(base_html);
+
+            if (this.options.type === "single") {
+                this.$cache.cont.append(single_html);
+                this.$cache.edge = this.$cache.cont.find(".irs-bar-edge");
+                this.$cache.s_single = this.$cache.cont.find(".single");
+                this.$cache.from[0].style.visibility = "hidden";
+                this.$cache.to[0].style.visibility = "hidden";
+                this.$cache.shad_single = this.$cache.cont.find(".shadow-single");
+            } else if (this.options.type === "double"){
+                this.$cache.cont.append(double_html);
+                this.$cache.s_from = this.$cache.cont.find(".from");
+                this.$cache.s_to = this.$cache.cont.find(".to");
+                this.$cache.shad_from = this.$cache.cont.find(".shadow-from");
+                this.$cache.shad_to = this.$cache.cont.find(".shadow-to");
+
+                this.setTopHandler();
+            } else {
+                this.$cache.cont.html(triple_html);
+                this.$cache.s_from = this.$cache.cont.find(".from");
+                this.$cache.s_to = this.$cache.cont.find(".to");
+                this.$cache.shad_from = this.$cache.cont.find(".shadow-from");
+                this.$cache.shad_to = this.$cache.cont.find(".shadow-to");
+                this.$cache.lineLeft = this.$cache.cont.find(".irs-line-left");
+                this.$cache.lineRight = this.$cache.cont.find(".irs-line-right");
+                this.$cache.inputLabel = this.$cache.cont.find(".irs-input");
+
+                this.setTopHandler();
+            }
+
             this.$cache.rs = this.$cache.cont.find(".irs");
             this.$cache.min = this.$cache.cont.find(".irs-min");
             this.$cache.max = this.$cache.cont.find(".irs-max");
@@ -496,23 +543,6 @@
             this.$cache.bar = this.$cache.cont.find(".irs-bar");
             this.$cache.line = this.$cache.cont.find(".irs-line");
             this.$cache.grid = this.$cache.cont.find(".irs-grid");
-
-            if (this.options.type === "single") {
-                this.$cache.cont.append(single_html);
-                this.$cache.edge = this.$cache.cont.find(".irs-bar-edge");
-                this.$cache.s_single = this.$cache.cont.find(".single");
-                this.$cache.from[0].style.visibility = "hidden";
-                this.$cache.to[0].style.visibility = "hidden";
-                this.$cache.shad_single = this.$cache.cont.find(".shadow-single");
-            } else {
-                this.$cache.cont.append(double_html);
-                this.$cache.s_from = this.$cache.cont.find(".from");
-                this.$cache.s_to = this.$cache.cont.find(".to");
-                this.$cache.shad_from = this.$cache.cont.find(".shadow-from");
-                this.$cache.shad_to = this.$cache.cont.find(".shadow-to");
-
-                this.setTopHandler();
-            }
 
             if (this.options.hide_from_to) {
                 this.$cache.from[0].style.display = "none";
@@ -641,7 +671,7 @@
             this.$cache.line.on("touchstart.irs_" + this.plugin_count, this.pointerClick.bind(this, "click"));
             this.$cache.line.on("mousedown.irs_" + this.plugin_count, this.pointerClick.bind(this, "click"));
 
-            if (this.options.drag_interval && this.options.type === "double") {
+            if (this.options.drag_interval && (this.options.type === "double" || this.options.type === "triple")) {
                 this.$cache.bar.on("touchstart.irs_" + this.plugin_count, this.pointerDown.bind(this, "both"));
                 this.$cache.bar.on("mousedown.irs_" + this.plugin_count, this.pointerDown.bind(this, "both"));
             } else {
@@ -729,7 +759,7 @@
                 $("*").prop("unselectable", false);
             }
 
-            this.updateScene();
+            this.updateScene(true);
             this.restoreOriginalMinInterval();
 
             // callbacks call
@@ -737,7 +767,7 @@
                 this.is_finish = true;
                 this.callOnFinish();
             }
-            
+
             this.dragging = false;
         },
 
@@ -781,7 +811,7 @@
 
             this.$cache.line.trigger("focus");
 
-            this.updateScene();
+            this.updateScene(false);
         },
 
         /**
@@ -1242,7 +1272,7 @@
          * Main function called in request animation frame
          * to update everything
          */
-        updateScene: function () {
+        updateScene: function (staticLabels) {
             if (this.raf_id) {
                 cancelAnimationFrame(this.raf_id);
                 this.raf_id = null;
@@ -1255,19 +1285,25 @@
                 return;
             }
 
-            this.drawHandles();
+            if (this.options.type === "triple" && this.options.input) {
+              var perc = this.convertToPercent(this.options.input.position);
+              this.$cache.lineLeft.css('width', perc + '%');
+              this.$cache.lineRight.css('width', (100 - perc) + '%');
+            }
+
+            this.drawHandles(staticLabels);
 
             if (this.is_active) {
-                this.raf_id = requestAnimationFrame(this.updateScene.bind(this));
+                this.raf_id = requestAnimationFrame(this.updateScene.bind(this, false));
             } else {
-                this.update_tm = setTimeout(this.updateScene.bind(this), 300);
+                this.update_tm = setTimeout(this.updateScene.bind(this, false), 300);
             }
         },
 
         /**
          * Draw handles
          */
-        drawHandles: function () {
+        drawHandles: function (staticLabels) {
             this.coords.w_rs = this.$cache.rs.outerWidth(false);
 
             if (!this.coords.w_rs) {
@@ -1282,7 +1318,7 @@
             if (this.coords.w_rs !== this.coords.w_rs_old || this.force_redraw) {
                 this.setMinMax();
                 this.calc(true);
-                this.drawLabels();
+                this.drawLabels(staticLabels);
                 if (this.options.grid) {
                     this.calcGridMargin();
                     this.calcGridLabels();
@@ -1302,7 +1338,7 @@
 
             if (this.old_from !== this.result.from || this.old_to !== this.result.to || this.force_redraw || this.is_key) {
 
-                this.drawLabels();
+                this.drawLabels(staticLabels);
 
                 this.$cache.bar[0].style.left = this.coords.p_bar_x + "%";
                 this.$cache.bar[0].style.width = this.coords.p_bar_w + "%";
@@ -1373,7 +1409,7 @@
          * measure labels collisions
          * collapse close labels
          */
-        drawLabels: function () {
+        drawLabels: function (staticLabels) {
             if (!this.options) {
                 return;
             }
@@ -1382,7 +1418,8 @@
                 p_values = this.options.p_values,
                 text_single,
                 text_from,
-                text_to;
+                text_to,
+                text_input;
 
             if (this.options.hide_from_to) {
                 return;
@@ -1426,9 +1463,15 @@
                     text_from = this.decorate(p_values[this.result.from]);
                     text_to = this.decorate(p_values[this.result.to]);
 
-                    this.$cache.single.html(text_single);
-                    this.$cache.from.html(text_from);
-                    this.$cache.to.html(text_to);
+                    if (this.options.type === "triple" && staticLabels) {
+                        this.$cache.single.html('0' + this.options.values_separator + '100');
+                        this.$cache.from.html('0');
+                        this.$cache.to.html('100');
+                    } else {
+                        this.$cache.single.html(text_single);
+                        this.$cache.from.html(text_from);
+                        this.$cache.to.html(text_to);
+                    }
 
                 } else {
 
@@ -1442,10 +1485,21 @@
                     text_from = this.decorate(this._prettify(this.result.from), this.result.from);
                     text_to = this.decorate(this._prettify(this.result.to), this.result.to);
 
-                    this.$cache.single.html(text_single);
-                    this.$cache.from.html(text_from);
-                    this.$cache.to.html(text_to);
+                    if (this.options.type === "triple" && staticLabels) {
+                        this.$cache.single.html('0' + this.options.values_separator + '100');
+                        this.$cache.from.html('0');
+                        this.$cache.to.html('100');
+                    } else {
+                        this.$cache.single.html(text_single);
+                        this.$cache.from.html(text_from);
+                        this.$cache.to.html(text_to);
+                    }
 
+                }
+
+                if (this.options.type === "triple" && this.options.input) {
+                    this.$cache.inputLabel.html(this.options.input.value);
+                    this.$cache.inputLabel.css('left', this.options.input.position + '%');
                 }
 
                 this.calcLabels();

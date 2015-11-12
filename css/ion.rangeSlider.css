@@ -6,7 +6,70 @@
 /* =====================================================================================================================
 // RangeSlider */
 
+.triple .irs-line {
+  height:3px;
+  width: 100%;
+  top: 37px;
+  border:none;
+  border-radius:0;
+  border-left: 0px solid #00B272;
+  background: #aaa;
+}
+
+.triple .irs-bar, .triple .irs-bar-edge {
+  height: 3px;
+  top: 37px;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+}
+
+.triple .irs-slider {
+  top: 31px;
+  width: 15px;
+  height: 15px;
+  border: none;
+  background: #ccc;
+  border-radius: 27px;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.triple .irs-line-left {
+  background-color: #00B272;
+  height: 100%;
+  width: 50%;
+  float: left;
+}
+
+.triple .irs-line-right {
+  background-color: #aaa;
+  height: 100%;
+  width: 50%;
+  float: right;
+}
+
+.triple .irs-from, .triple .irs-to, .triple .irs-single, .triple .irs-input {
+  font-size: 1.2em;
+}
+
+.triple .irs-from:after, .triple .irs-to:after, .triple .irs-single:after {
+  border-top-color: #000;
+}
+
+.triple .irs-input {
+  bottom: 0;
+  left: 0;
+
+  height: 32px;
+  width: 22px;
+  text-align: center;
+  margin-top: 60px;
+  margin-left: -11px;
+}
+
 .irs {
+    height: 44px;
     position: relative; display: block;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -77,7 +140,7 @@
         cursor: default;
     }
 
-    .irs-from, .irs-to, .irs-single {
+    .irs-from, .irs-to, .irs-single, .irs-input {
         position: absolute; display: block;
         top: 0; left: 0;
         cursor: default;
