@@ -12,7 +12,7 @@
     "description": "Powerful range slider with skin support",
     "repository": {
         "type": "git",
-        "url": "git://github.com/IonDen/ion.rangeSlider.git"
+        "url": "https://github.com/endritbajo/ion.rangeSlider.git"
     },
     "main": [
         "js/ion.rangeSlider.js",
