@@ -269,9 +269,6 @@
             to: null,
             step: 1,
 
-            input_slider: false,
-            input_slider_value: 0,
-
             static_labels: false,
 
             min_interval: 0,
@@ -1229,7 +1226,7 @@
             if (this.options.input_slider) {
                 var width = this.$cache.input_slider.outerWidth(false);
                 var width_percent = width / this.coords.w_rs * 100;
-                this.labels.p_input_slider = this.options.input_slider_value - (width_percent / 2);
+                this.labels.p_input_slider = this.options.input_slider.percentage - (width_percent / 2);
             }
 
             if (this.options.type === "single") {
@@ -1284,9 +1281,9 @@
             }
 
             if (this.options.input_slider) {
-                this.$cache.input_slider.html(this.options.input_slider_value);
-                this.$cache.line_left.css('width', this.options.input_slider_value + '%');
-                this.$cache.line_right.css('width', (100 - this.options.input_slider_value) + '%');
+                this.$cache.input_slider.html(this.options.input_slider.text);
+                this.$cache.line_left.css('width', this.options.input_slider.percentage + '%');
+                this.$cache.line_right.css('width', (100 - this.options.input_slider.percentage) + '%');
             }
 
             this.drawHandles();
