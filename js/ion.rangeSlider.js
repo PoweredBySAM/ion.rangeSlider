@@ -1,4 +1,4 @@
-﻿// Ion.RangeSlider
+// Ion.RangeSlider
 // version 2.1.2 Build: 350
 // © Denis Ineshin, 2015
 // https://github.com/IonDen
@@ -111,7 +111,7 @@
 
     var base_html =
         '<span class="irs">' +
-        '<span class="irs-line" tabindex="-1"><span class="irs-line-left"></span><span class="irs-line-mid"></span><span class="irs-line-right"></span></span>' +
+        '<span class="irs-line" tabindex="-1"><span class="irs-line-left"></span><span class="irs-line-right"></span></span>' +
         '<span class="irs-min">0</span><span class="irs-max">1</span>' +
         '<span class="irs-from">0</span><span class="irs-to">0</span><span class="irs-single">0</span>' +
         '</span>' +
@@ -119,7 +119,6 @@
         '<span class="irs-bar"></span>';
 
     var single_html =
-        '<span class="irs-bar-edge"></span>' +
         '<span class="irs-shadow shadow-single"></span>' +
         '<span class="irs-slider single"></span>';
 
@@ -129,24 +128,11 @@
         '<span class="irs-slider from"></span>' +
         '<span class="irs-slider to"></span>';
 
-    var triple_html =
-        '<span class="triple">' +
-        '<span class="irs">' +
-        '<span class="irs-line" tabindex="-1"><span class="irs-line-left"></span><span class="irs-line-right"></span></span>' +
-        '<span class="irs-min">0</span><span class="irs-max">1</span>' +
-        '<span class="irs-from">0</span><span class="irs-to">0</span><span class="irs-single">0</span>' +
-        '</span>' +
-        '<span class="irs-input">0</span>' +
-        '<span class="irs-grid"></span>' +
-        '<span class="irs-bar"></span>' +
-        '<span class="irs-shadow shadow-from"></span>' +
-        '<span class="irs-shadow shadow-to"></span>' +
-        '<span class="irs-slider from"></span>' +
-        '<span class="irs-slider to"></span>' +
-        '</span>';
-
     var disable_html =
         '<span class="irs-disable-mask"></span>';
+
+    var input_slider_html =
+        '<span class="irs-input-slider">0</span>';
 
 
 
@@ -197,8 +183,6 @@
             single: null,
             bar: null,
             line: null,
-            lineLeft: null,
-            lineRight: null,
             s_single: null,
             s_from: null,
             s_to: null,
@@ -285,6 +269,11 @@
             to: null,
             step: 1,
 
+            input_slider: false,
+            input_slider_value: 0,
+
+            static_labels: false,
+
             min_interval: 0,
             max_interval: 0,
             drag_interval: false,
@@ -346,6 +335,8 @@
             from: $inp.data("from"),
             to: $inp.data("to"),
             step: $inp.data("step"),
+
+            input: $inp.data("input"),
 
             min_interval: $inp.data("minInterval"),
             max_interval: $inp.data("maxInterval"),
@@ -491,7 +482,7 @@
                 this.callOnStart();
             }
 
-            this.updateScene(true);
+            this.updateScene();
         },
 
         /**
@@ -505,35 +496,6 @@
             this.result.slider = this.$cache.cont;
 
             this.$cache.cont.html(base_html);
-
-            if (this.options.type === "single") {
-                this.$cache.cont.append(single_html);
-                this.$cache.edge = this.$cache.cont.find(".irs-bar-edge");
-                this.$cache.s_single = this.$cache.cont.find(".single");
-                this.$cache.from[0].style.visibility = "hidden";
-                this.$cache.to[0].style.visibility = "hidden";
-                this.$cache.shad_single = this.$cache.cont.find(".shadow-single");
-            } else if (this.options.type === "double"){
-                this.$cache.cont.append(double_html);
-                this.$cache.s_from = this.$cache.cont.find(".from");
-                this.$cache.s_to = this.$cache.cont.find(".to");
-                this.$cache.shad_from = this.$cache.cont.find(".shadow-from");
-                this.$cache.shad_to = this.$cache.cont.find(".shadow-to");
-
-                this.setTopHandler();
-            } else {
-                this.$cache.cont.html(triple_html);
-                this.$cache.s_from = this.$cache.cont.find(".from");
-                this.$cache.s_to = this.$cache.cont.find(".to");
-                this.$cache.shad_from = this.$cache.cont.find(".shadow-from");
-                this.$cache.shad_to = this.$cache.cont.find(".shadow-to");
-                this.$cache.lineLeft = this.$cache.cont.find(".irs-line-left");
-                this.$cache.lineRight = this.$cache.cont.find(".irs-line-right");
-                this.$cache.inputLabel = this.$cache.cont.find(".irs-input");
-
-                this.setTopHandler();
-            }
-
             this.$cache.rs = this.$cache.cont.find(".irs");
             this.$cache.min = this.$cache.cont.find(".irs-min");
             this.$cache.max = this.$cache.cont.find(".irs-max");
@@ -543,6 +505,32 @@
             this.$cache.bar = this.$cache.cont.find(".irs-bar");
             this.$cache.line = this.$cache.cont.find(".irs-line");
             this.$cache.grid = this.$cache.cont.find(".irs-grid");
+            this.$cache.line_left = this.$cache.cont.find(".irs-line-left");
+            this.$cache.line_right = this.$cache.cont.find(".irs-line-right");
+
+            if (this.options.type === "single") {
+                this.$cache.cont.append(single_html);
+                this.$cache.edge = this.$cache.cont.find(".irs-bar-edge");
+                this.$cache.s_single = this.$cache.cont.find(".single");
+                this.$cache.from[0].style.visibility = "hidden";
+                this.$cache.to[0].style.visibility = "hidden";
+                this.$cache.shad_single = this.$cache.cont.find(".shadow-single");
+            } else {
+                this.$cache.cont.append(double_html);
+                this.$cache.s_from = this.$cache.cont.find(".from");
+                this.$cache.s_to = this.$cache.cont.find(".to");
+                this.$cache.shad_from = this.$cache.cont.find(".shadow-from");
+                this.$cache.shad_to = this.$cache.cont.find(".shadow-to");
+
+                this.setTopHandler();
+            }
+
+            if (this.options.input_slider) {
+                this.$cache.cont.append(input_slider_html);
+                this.$cache.input_slider = this.$cache.cont.find(".irs-input-slider");
+
+                this.$cache.bar.remove();
+            }
 
             if (this.options.hide_from_to) {
                 this.$cache.from[0].style.display = "none";
@@ -671,7 +659,7 @@
             this.$cache.line.on("touchstart.irs_" + this.plugin_count, this.pointerClick.bind(this, "click"));
             this.$cache.line.on("mousedown.irs_" + this.plugin_count, this.pointerClick.bind(this, "click"));
 
-            if (this.options.drag_interval && (this.options.type === "double" || this.options.type === "triple")) {
+            if (this.options.drag_interval && this.options.type === "double") {
                 this.$cache.bar.on("touchstart.irs_" + this.plugin_count, this.pointerDown.bind(this, "both"));
                 this.$cache.bar.on("mousedown.irs_" + this.plugin_count, this.pointerDown.bind(this, "both"));
             } else {
@@ -759,7 +747,7 @@
                 $("*").prop("unselectable", false);
             }
 
-            this.updateScene(true);
+            this.updateScene();
             this.restoreOriginalMinInterval();
 
             // callbacks call
@@ -779,6 +767,7 @@
          * @param e {Object} event object
          */
         pointerDown: function (target, e) {
+
             e.preventDefault();
             var x = e.pageX || e.originalEvent.touches && e.originalEvent.touches[0].pageX;
             if (e.button === 2) {
@@ -795,7 +784,6 @@
 
             this.current_plugin = this.plugin_count;
             this.target = target;
-
             this.is_active = true;
             this.dragging = true;
 
@@ -811,7 +799,12 @@
 
             this.$cache.line.trigger("focus");
 
-            this.updateScene(false);
+            // We want to redraw because the labels change
+            if (this.options.static_labels) {
+                this.force_redraw = true;
+            }
+
+            this.updateScene();
         },
 
         /**
@@ -1233,6 +1226,12 @@
                 return;
             }
 
+            if (this.options.input_slider) {
+                var width = this.$cache.input_slider.outerWidth(false);
+                var width_percent = width / this.coords.w_rs * 100;
+                this.labels.p_input_slider = this.options.input_slider_value - (width_percent / 2);
+            }
+
             if (this.options.type === "single") {
 
                 this.labels.w_single = this.$cache.single.outerWidth(false);
@@ -1241,7 +1240,6 @@
                 this.labels.p_single_left = this.checkEdges(this.labels.p_single_left, this.labels.p_single_fake);
 
             } else {
-
                 this.labels.w_from = this.$cache.from.outerWidth(false);
                 this.labels.p_from_fake = this.labels.w_from / this.coords.w_rs * 100;
                 this.labels.p_from_left = this.coords.p_from_fake + (this.coords.p_handle / 2) - (this.labels.p_from_fake / 2);
@@ -1272,7 +1270,7 @@
          * Main function called in request animation frame
          * to update everything
          */
-        updateScene: function (staticLabels) {
+        updateScene: function () {
             if (this.raf_id) {
                 cancelAnimationFrame(this.raf_id);
                 this.raf_id = null;
@@ -1285,25 +1283,25 @@
                 return;
             }
 
-            if (this.options.type === "triple" && this.options.input) {
-              var perc = this.convertToPercent(this.options.input.position);
-              this.$cache.lineLeft.css('width', perc + '%');
-              this.$cache.lineRight.css('width', (100 - perc) + '%');
+            if (this.options.input_slider) {
+                this.$cache.input_slider.html(this.options.input_slider_value);
+                this.$cache.line_left.css('width', this.options.input_slider_value + '%');
+                this.$cache.line_right.css('width', (100 - this.options.input_slider_value) + '%');
             }
 
-            this.drawHandles(staticLabels);
+            this.drawHandles();
 
             if (this.is_active) {
-                this.raf_id = requestAnimationFrame(this.updateScene.bind(this, false));
+                this.raf_id = requestAnimationFrame(this.updateScene.bind(this));
             } else {
-                this.update_tm = setTimeout(this.updateScene.bind(this, false), 300);
+                this.update_tm = setTimeout(this.updateScene.bind(this), 300);
             }
         },
 
         /**
          * Draw handles
          */
-        drawHandles: function (staticLabels) {
+        drawHandles: function () {
             this.coords.w_rs = this.$cache.rs.outerWidth(false);
 
             if (!this.coords.w_rs) {
@@ -1318,7 +1316,7 @@
             if (this.coords.w_rs !== this.coords.w_rs_old || this.force_redraw) {
                 this.setMinMax();
                 this.calc(true);
-                this.drawLabels(staticLabels);
+                this.drawLabels();
                 if (this.options.grid) {
                     this.calcGridMargin();
                     this.calcGridLabels();
@@ -1338,7 +1336,7 @@
 
             if (this.old_from !== this.result.from || this.old_to !== this.result.to || this.force_redraw || this.is_key) {
 
-                this.drawLabels(staticLabels);
+                this.drawLabels();
 
                 this.$cache.bar[0].style.left = this.coords.p_bar_x + "%";
                 this.$cache.bar[0].style.width = this.coords.p_bar_w + "%";
@@ -1409,7 +1407,7 @@
          * measure labels collisions
          * collapse close labels
          */
-        drawLabels: function (staticLabels) {
+        drawLabels: function () {
             if (!this.options) {
                 return;
             }
@@ -1418,8 +1416,11 @@
                 p_values = this.options.p_values,
                 text_single,
                 text_from,
-                text_to,
-                text_input;
+                text_to;
+
+            if (this.options.input_slider) {
+                this.$cache.input_slider[0].style.left = this.labels.p_input_slider + '%';
+            }
 
             if (this.options.hide_from_to) {
                 return;
@@ -1450,56 +1451,48 @@
                 }
 
             } else {
+                var v_from = this.result.from;
+                var v_to = this.result.to;
+
+                // If there's the option to show static labels and
+                // the handlers are not being dragged
+                if (this.options.static_labels && !this.is_active) {
+                    v_from = this.options.min;
+                    v_to = this.options.max;
+                }
 
                 if (values_num) {
 
                     if (this.options.decorate_both) {
-                        text_single = this.decorate(p_values[this.result.from]);
+                        text_single = this.decorate(p_values[v_from]);
                         text_single += this.options.values_separator;
-                        text_single += this.decorate(p_values[this.result.to]);
+                        text_single += this.decorate(p_values[v_to]);
                     } else {
-                        text_single = this.decorate(p_values[this.result.from] + this.options.values_separator + p_values[this.result.to]);
+                        text_single = this.decorate(p_values[v_from] + this.options.values_separator + p_values[v_to]);
                     }
-                    text_from = this.decorate(p_values[this.result.from]);
-                    text_to = this.decorate(p_values[this.result.to]);
+                    text_from = this.decorate(p_values[v_from]);
+                    text_to = this.decorate(p_values[v_to]);
 
-                    if (this.options.type === "triple" && staticLabels) {
-                        this.$cache.single.html('0' + this.options.values_separator + '100');
-                        this.$cache.from.html('0');
-                        this.$cache.to.html('100');
-                    } else {
-                        this.$cache.single.html(text_single);
-                        this.$cache.from.html(text_from);
-                        this.$cache.to.html(text_to);
-                    }
+                    this.$cache.single.html(text_single);
+                    this.$cache.from.html(text_from);
+                    this.$cache.to.html(text_to);
 
                 } else {
 
                     if (this.options.decorate_both) {
-                        text_single = this.decorate(this._prettify(this.result.from), this.result.from);
+                        text_single = this.decorate(this._prettify(v_from), v_from);
                         text_single += this.options.values_separator;
-                        text_single += this.decorate(this._prettify(this.result.to), this.result.to);
+                        text_single += this.decorate(this._prettify(v_to), v_to);
                     } else {
-                        text_single = this.decorate(this._prettify(this.result.from) + this.options.values_separator + this._prettify(this.result.to), this.result.to);
+                        text_single = this.decorate(this._prettify(v_from) + this.options.values_separator + this._prettify(v_to), v_to);
                     }
-                    text_from = this.decorate(this._prettify(this.result.from), this.result.from);
-                    text_to = this.decorate(this._prettify(this.result.to), this.result.to);
+                    text_from = this.decorate(this._prettify(v_from), v_from);
+                    text_to = this.decorate(this._prettify(v_to), v_to);
 
-                    if (this.options.type === "triple" && staticLabels) {
-                        this.$cache.single.html('0' + this.options.values_separator + '100');
-                        this.$cache.from.html('0');
-                        this.$cache.to.html('100');
-                    } else {
-                        this.$cache.single.html(text_single);
-                        this.$cache.from.html(text_from);
-                        this.$cache.to.html(text_to);
-                    }
+                    this.$cache.single.html(text_single);
+                    this.$cache.from.html(text_from);
+                    this.$cache.to.html(text_to);
 
-                }
-
-                if (this.options.type === "triple" && this.options.input) {
-                    this.$cache.inputLabel.html(this.options.input.value);
-                    this.$cache.inputLabel.css('left', this.options.input.position + '%');
                 }
 
                 this.calcLabels();
