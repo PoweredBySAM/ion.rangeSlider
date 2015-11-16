@@ -1281,7 +1281,7 @@
             }
 
             if (this.options.input_slider) {
-                this.$cache.input_slider.html(this.options.input_slider.text);
+                this.$cache.input_slider.html(String(this.options.input_slider.text));
                 this.$cache.line_left.css('width', this.options.input_slider.percentage + '%');
                 this.$cache.line_right.css('width', (100 - this.options.input_slider.percentage) + '%');
             }
