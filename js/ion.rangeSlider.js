@@ -1510,7 +1510,11 @@
                         } else if (this.target === "to") {
                             this.$cache.to[0].style.visibility = "visible";
                         }
-                        this.$cache.single[0].style.visibility = "hidden";
+                        if (this.options.static_labels && !this.is_active) {
+                            this.$cache.single[0].style.visibility = "visible";
+                        } else {
+                            this.$cache.single[0].style.visibility = "hidden";
+                        }
                         max = to_left;
                     } else {
                         this.$cache.from[0].style.visibility = "hidden";
