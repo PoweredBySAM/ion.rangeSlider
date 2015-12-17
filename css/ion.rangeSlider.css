@@ -141,16 +141,11 @@
     opacity: 0.4;
 }
 
-.irs-input-content {
-    float: left;
-}
-
 .irs-input-slider {
-    width: 100%;
     position: absolute;
     display: block;
     float: left;
-    text-align: left;
+    text-align: center;
 }
 
 .irs-hidden-input {
