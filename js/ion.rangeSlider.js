@@ -2287,21 +2287,20 @@
         },
 
         updateInput: function (options) {
-            var width = this.$cache.input_slider.outerWidth(false);
-            var width_percent = width / this.coords.w_rs * 100;
-
             // Update values
             if (options) {
                 this.options.input_slider.percentage = options.percentage;
                 this.options.input_slider.text = options.text;
             }
 
-            this.labels.p_input_slider = this.options.input_slider.percentage - (width_percent / 2);
-            this.$cache.input_slider.html(String(this.options.input_slider.text));
             this.$cache.line_right[0].style.webkitTransform = 'translateX(' + this.options.input_slider.percentage + '%)';
+
+            this.$cache.input_slider.html(String(this.options.input_slider.text));
+
+            var width = this.$cache.input_slider.outerWidth(false);
             var matrix = this.$cache.line_right.css('transform').match(/(-?[0-9\.]+)/g);
             if (matrix) {
-                this.$cache.input_slider[0].style.webkitTransform = 'translateX(' + (matrix[4] - width / 2) + 'px)';
+                this.$cache.input_slider[0].style.webkitTransform = 'translateX(' + (matrix[4] - (width / 2)) + 'px)';
             }
         },
 
