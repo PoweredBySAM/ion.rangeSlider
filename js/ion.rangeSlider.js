@@ -2299,7 +2299,10 @@
             this.labels.p_input_slider = this.options.input_slider.percentage - (width_percent / 2);
             this.$cache.input_slider.html(String(this.options.input_slider.text));
             this.$cache.line_right[0].style.webkitTransform = 'translateX(' + this.options.input_slider.percentage + '%)';
-            this.$cache.input_slider[0].style.webkitTransform = 'translateX(' + this.labels.p_input_slider * this.$cache.rs.outerWidth(false) / 100 + 'px)';
+            var matrix = this.$cache.line_right.css('transform').match(/(-?[0-9\.]+)/g);
+            if (matrix) {
+                this.$cache.input_slider[0].style.webkitTransform = 'translateX(' + (matrix[4] - width / 2) + 'px)';
+            }
         },
 
         reset: function () {
