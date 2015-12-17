@@ -142,7 +142,7 @@
 }
 
 .irs-input-content {
-
+    float: left;
 }
 
 .irs-input-slider {
@@ -150,6 +150,7 @@
     position: absolute;
     display: block;
     float: left;
+    text-align: left;
 }
 
 .irs-hidden-input {

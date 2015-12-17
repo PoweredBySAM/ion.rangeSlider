@@ -1282,7 +1282,10 @@
             }
 
             this.drawHandles();
-            this.updateInput();
+            
+            if (this.options.input_slider) {
+                this.updateInput();
+            }
 
             if (this.is_active) {
                 this.raf_id = requestAnimationFrame(this.updateScene.bind(this));
