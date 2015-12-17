@@ -132,7 +132,7 @@
         '<span class="irs-disable-mask"></span>';
 
     var input_slider_html =
-        '<span class="irs-input-slider">0</span>';
+        '<span class="irs-input-slider"><span class="irs-input-content">0</span></span>';
 
 
 
@@ -488,7 +488,7 @@
          * Appends slider template to a DOM
          */
         append: function () {
-            var container_html = '<span class="irs js-irs-' + this.plugin_count + '" style="width: '+ this.options.width +'px"></span>';
+            var container_html = '<span class="irs js-irs-' + this.plugin_count + '"></span>';
             this.$cache.input.before(container_html);
             this.$cache.input.prop("readonly", true);
             this.$cache.cont = this.$cache.input.prev();
@@ -527,9 +527,12 @@
             if (this.options.input_slider) {
                 this.$cache.cont.append(input_slider_html);
                 this.$cache.input_slider = this.$cache.cont.find(".irs-input-slider");
-                this.$cache.line_left.css('width', this.options.width + 'px');
-                this.$cache.line_left[0].style.webkitTransform = 'translateX(-' + this.options.width + 'px)';
-                this.$cache.line_right.css('width', this.options.width + 'px');
+                this.$cache.input_content = this.$cache.input_slider.find(".irs-input-content");
+                this.$cache.line_left.css('width', '100%');
+                this.$cache.line_left.css('z-index', 0);
+                this.$cache.line_right.css('width', '100%');
+                this.$cache.line_right.css('z-index', 1);
+                this.updateInput();
                 this.$cache.bar.remove();
             }
 
@@ -1227,12 +1230,6 @@
                 return;
             }
 
-            if (this.options.input_slider) {
-                var width = this.$cache.input_slider.outerWidth(false);
-                var width_percent = width / this.coords.w_rs * 100;
-                this.labels.p_input_slider = this.options.input_slider.percentage - (width_percent / 2);
-            }
-
             if (this.options.type === "single") {
 
                 this.labels.w_single = this.$cache.single.outerWidth(false);
@@ -1284,12 +1281,8 @@
                 return;
             }
 
-            if (this.options.input_slider) {
-                this.$cache.input_slider.html(String(this.options.input_slider.text));
-                this.$cache.line_left[0].style.webkitTransform = 'translateX(' + (this.options.input_slider.percentage - 100) * this.options.width / 100 + 'px)';
-            }
-
             this.drawHandles();
+            this.updateInput();
 
             if (this.is_active) {
                 this.raf_id = requestAnimationFrame(this.updateScene.bind(this));
@@ -1418,10 +1411,6 @@
                 text_single,
                 text_from,
                 text_to;
-
-            if (this.options.input_slider) {
-                this.$cache.input_slider[0].style.webkitTransform = 'translateX(' + (this.labels.p_input_slider * this.options.width / 100) + 'px)';
-            }
 
             if (this.options.hide_from_to) {
                 return;
@@ -2287,18 +2276,19 @@
         },
 
         updateInput: function (options) {
-            var width = this.$cache.input_slider.outerWidth(false);
+            var width = this.$cache.input_content.outerWidth(false);
             var width_percent = width / this.coords.w_rs * 100;
 
             // Update values
-            this.options.input_slider.percentage = options.percentage;
-            this.options.input_slider.text = options.text;
+            if (options) {
+                this.options.input_slider.percentage = options.percentage;
+                this.options.input_slider.text = options.text;
+            }
 
             this.labels.p_input_slider = this.options.input_slider.percentage - (width_percent / 2);
-            this.$cache.input_slider.html(String(this.options.input_slider.text));
-            this.$cache.line_left.css('width', this.options.input_slider.percentage + '%');
-            this.$cache.line_right.css('width', (100 - this.options.input_slider.percentage) + '%');
-            this.$cache.input_slider[0].style.left = this.labels.p_input_slider + '%';
+            this.$cache.input_content.html(String(this.options.input_slider.text));
+            this.$cache.line_right[0].style.webkitTransform = 'translateX(' + this.options.input_slider.percentage + '%)';
+            this.$cache.input_slider[0].style.webkitTransform = 'translateX(' + this.labels.p_input_slider + '%)';
         },
 
         reset: function () {

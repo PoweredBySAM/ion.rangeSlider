@@ -141,9 +141,15 @@
     opacity: 0.4;
 }
 
+.irs-input-content {
+
+}
+
 .irs-input-slider {
+    width: 100%;
     position: absolute;
     display: block;
+    float: left;
 }
 
 .irs-hidden-input {
