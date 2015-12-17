@@ -132,7 +132,7 @@
         '<span class="irs-disable-mask"></span>';
 
     var input_slider_html =
-        '<span class="irs-input-slider">0</span>';
+        '<span class="irs-input-slider"><span class="irs-input-content">0</span></span>';
 
 
 
@@ -527,7 +527,7 @@
             if (this.options.input_slider) {
                 this.$cache.cont.append(input_slider_html);
                 this.$cache.input_slider = this.$cache.cont.find(".irs-input-slider");
-                // this.$cache.input_content = this.$cache.input_slider.find(".irs-input-content");
+                this.$cache.input_content = this.$cache.input_slider.find(".irs-input-content");
                 this.$cache.line_left.css('width', '100%');
                 this.$cache.line_left.css('z-index', 0);
                 this.$cache.line_right.css('width', '100%');
@@ -1283,10 +1283,6 @@
 
             this.drawHandles();
 
-            if (this.options.input_slider) {
-                this.updateInput();
-            }
-
             if (this.is_active) {
                 this.raf_id = requestAnimationFrame(this.updateScene.bind(this));
             } else {
@@ -1605,21 +1601,33 @@
         callOnStart: function () {
             if (this.options.onStart && typeof this.options.onStart === "function") {
                 this.options.onStart(this.result);
+                if (this.options.input_slider) {
+                    this.updateInput();
+                }
             }
         },
         callOnChange: function () {
             if (this.options.onChange && typeof this.options.onChange === "function") {
                 this.options.onChange(this.result);
+                if (this.options.input_slider) {
+                    this.updateInput();
+                }
             }
         },
         callOnFinish: function () {
             if (this.options.onFinish && typeof this.options.onFinish === "function") {
                 this.options.onFinish(this.result);
+                if (this.options.input_slider) {
+                    this.updateInput();
+                }
             }
         },
         callOnUpdate: function () {
             if (this.options.onUpdate && typeof this.options.onUpdate === "function") {
                 this.options.onUpdate(this.result);
+                if (this.options.input_slider) {
+                    this.updateInput();
+                }
             }
         },
 
@@ -2279,7 +2287,7 @@
         },
 
         updateInput: function (options) {
-            var width = this.$cache.input_slider.outerWidth(false);
+            var width = this.$cache.input_content.outerWidth(false);
             var width_percent = width / this.coords.w_rs * 100;
 
             // Update values
@@ -2289,9 +2297,9 @@
             }
 
             this.labels.p_input_slider = this.options.input_slider.percentage - (width_percent / 2);
-            this.$cache.input_slider.html(String(this.options.input_slider.text));
+            this.$cache.input_content.html(String(this.options.input_slider.text));
             this.$cache.line_right[0].style.webkitTransform = 'translateX(' + this.options.input_slider.percentage + '%)';
-            this.$cache.input_slider[0].style.webkitTransform = 'translateX(' + this.labels.p_input_slider * this.$cache.rs.outerWidth(false) / 100 + 'px)';
+            this.$cache.input_slider[0].style.webkitTransform = 'translateX(' + this.labels.p_input_slider + '%)';
         },
 
         reset: function () {
