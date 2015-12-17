@@ -1338,16 +1338,13 @@
 
                 this.drawLabels();
 
-                this.$cache.bar[0].style.webkitTransform = 'translateX(' + this.coords.p_bar_x + '%)';
-                // this.$cache.bar[0].style.left = this.coords.p_bar_x + "%";
-                // this.$cache.bar[0].style.width = this.coords.p_bar_w + "%";
+                this.$cache.bar[0].style.left = this.coords.p_bar_x + "%";
+                this.$cache.bar[0].style.width = this.coords.p_bar_w + "%";
 
                 if (this.options.type === "single") {
-                    this.$cache.s_single[0].style.webkitTransform = 'translateX(' + this.coords.p_single_fake + '%)';
-                    // this.$cache.s_single[0].style.left = this.coords.p_single_fake + "%";
+                    this.$cache.s_single[0].style.left = this.coords.p_single_fake + "%";
 
-                    this.$cache.single[0].style.webkitTransform = 'translateX(' + this.coords.p_single_left + '%)';
-                    // this.$cache.single[0].style.left = this.labels.p_single_left + "%";
+                    this.$cache.single[0].style.left = this.labels.p_single_left + "%";
 
                     if (this.options.values.length) {
                         this.$cache.input.prop("value", this.result.from_value);
@@ -1357,22 +1354,17 @@
                     this.$cache.input.data("from", this.result.from);
                 } else {
 
-                    this.$cache.s_from[0].style.webkitTransform = 'translateX(' + this.coords.p_from_fake + '%)';
-                    // this.$cache.s_from[0].style.left = this.coords.p_from_fake + "%";
-                    this.$cache.s_to[0].style.webkitTransform = 'translateX(' + this.coords.p_to_fake + '%)';
-                    // this.$cache.s_to[0].style.left = this.coords.p_to_fake + "%";
+                    this.$cache.s_from[0].style.left = this.coords.p_from_fake + "%";
+                    this.$cache.s_to[0].style.left = this.coords.p_to_fake + "%";
 
                     if (this.old_from !== this.result.from || this.force_redraw) {
-                        this.$cache.from[0].style.webkitTransform = 'translateX(' + this.coords.p_from_left + '%)';
-                        // this.$cache.from[0].style.left = this.labels.p_from_left + "%";
+                        this.$cache.from[0].style.left = this.labels.p_from_left + "%";
                     }
                     if (this.old_to !== this.result.to || this.force_redraw) {
-                        this.$cache.to[0].style.webkitTransform = 'translateX(' + this.coords.p_to_left + '%)';
-                        // this.$cache.to[0].style.left = this.labels.p_to_left + "%";
+                        this.$cache.to[0].style.left = this.labels.p_to_left + "%";
                     }
 
-                    this.$cache.single[0].style.webkitTransform = 'translateX(' + this.coords.p_single_left + '%)';
-                    // this.$cache.single[0].style.left = this.labels.p_single_left + "%";
+                    this.$cache.single[0].style.left = this.labels.p_single_left + "%";
 
                     if (this.options.values.length) {
                         this.$cache.input.prop("value", this.result.from_value + this.options.input_values_separator + this.result.to_value);
@@ -1517,14 +1509,10 @@
                     this.$cache.single[0].style.visibility = "visible";
 
                     if (this.result.from === this.result.to) {
-                        if (this.target === "from") {
-                            this.$cache.from[0].style.visibility = "visible";
-                        } else if (this.target === "to") {
-                            this.$cache.to[0].style.visibility = "visible";
-                        }
                         if (this.options.static_labels && !this.is_active) {
                             this.$cache.single[0].style.visibility = "visible";
                         } else {
+                            this.$cache.to[0].style.visibility = "visible";
                             this.$cache.single[0].style.visibility = "hidden";
                         }
                         max = to_left;
@@ -1581,8 +1569,7 @@
                     from_min = from_min + (this.coords.p_handle / 2);
 
                     c.shad_single[0].style.display = "block";
-                    c.shad_single[0].style.webkitTransform = 'translateX(' + from_min + '%)';
-                    // c.shad_single[0].style.left = from_min + "%";
+                    c.shad_single[0].style.left = from_min + "%";
                     c.shad_single[0].style.width = from_max + "%";
                 } else {
                     c.shad_single[0].style.display = "none";
@@ -1596,8 +1583,7 @@
                     from_min = from_min + (this.coords.p_handle / 2);
 
                     c.shad_from[0].style.display = "block";
-                    c.shad_from[0].style.webkitTransform = 'translateX(' + from_min + '%)';
-                    // c.shad_from[0].style.left = from_min + "%";
+                    c.shad_from[0].style.left = from_min + "%";
                     c.shad_from[0].style.width = from_max + "%";
                 } else {
                     c.shad_from[0].style.display = "none";
@@ -1611,8 +1597,7 @@
                     to_min = to_min + (this.coords.p_handle / 2);
 
                     c.shad_to[0].style.display = "block";
-                    c.shad_to[0].style.webkitTransform = 'translateX(' + to_min + '%)';
-                    // c.shad_to[0].style.left = to_min + "%";
+                    c.shad_to[0].style.left = to_min + "%";
                     c.shad_to[0].style.width = to_max + "%";
                 } else {
                     c.shad_to[0].style.display = "none";
@@ -2274,8 +2259,7 @@
 
             this.$cache.grid[0].style.width = this.toFixed(100 - this.coords.p_handle) + "%";
 
-            this.$cache.grid[0].style.webkitTransform = 'translateX(' + this.coords.grid_gap + '%)';
-            // this.$cache.grid[0].style.left = this.coords.grid_gap + "%";
+            this.$cache.grid[0].style.left = this.coords.grid_gap + "%";
         },
 
 
@@ -2300,6 +2284,21 @@
             this.toggleInput();
             this.remove();
             this.init(true);
+        },
+
+        updateInput: function (options) {
+            var width = this.$cache.input_slider.outerWidth(false);
+            var width_percent = width / this.coords.w_rs * 100;
+
+            // Update values
+            this.options.input_slider.percentage = options.percentage;
+            this.options.input_slider.text = options.text;
+
+            this.labels.p_input_slider = this.options.input_slider.percentage - (width_percent / 2);
+            this.$cache.input_slider.html(String(this.options.input_slider.text));
+            this.$cache.line_left.css('width', this.options.input_slider.percentage + '%');
+            this.$cache.line_right.css('width', (100 - this.options.input_slider.percentage) + '%');
+            this.$cache.input_slider[0].style.left = this.labels.p_input_slider + '%';
         },
 
         reset: function () {
